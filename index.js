@@ -2,15 +2,40 @@ const { parse, unparse } = require("papaparse");
 const fs = require("fs");
 
 /**
- * Transform CSV data by defining new columns with custom transformations
- * @param {string|Buffer} inputCsv - The input CSV data or file path
- * @param {Object.<string, Function|boolean|string>} columnTransformers - Object mapping new column names to transformer functions
- * @param {Object} options - Additional options
- * @param {boolean} [options.isFilePath=false] - Whether inputCsv is a file path or CSV string
- * @param {Object} [options.parseOptions={}] - Options to pass to Papa Parse
- * @param {Object} [options.specialRowProcessors=[{condtion: function(row), finalData: function(row)}]
- * @returns {string} The transformed CSV as a string
- */
+* Transform CSV data by defining new columns with custom transformations
+* @param {string|Buffer} inputCsv - The input CSV data or file path
+* @param {Object.<string, Function|boolean|string>} columnTransformers - Object mapping column names to transformers:
+    *   - If a function, it will be called with the current row and should return the new value
+*   - If true, the value will be copied from the input row
+*   - If a string or other value, that value will be used directly
+* @param {Object} [options={}] - Additional options
+* @param {boolean} [options.isFilePath=false] - Whether inputCsv is a file path or CSV string
+* @param {Object} [options.parseOptions={}] - Options to pass to Papa Parse
+* @param {Object[]} [options.specialRowProcessors=[]] - Special row processors that override normal transformation
+* @param {Function} options.specialRowProcessors.condition - Function that takes a row and returns true if this processor should be used
+* @param {Function} options.specialRowProcessors.finalData - Function that takes a row and returns the final row data
+* @returns {string} The transformed CSV as a string
+*
+* @example
+* // Basic usage with column transformers
+* const result = transformCsv(csvData, {
+  *   "New Column": row => row["Old Column"].toUpperCase(),
+  *   "Copy Column": true,
+  *   "Static Column": "Static Value"
+      * });
+*
+* @example
+* // Usage with special row processor
+* const result = transformCsv(csvData, columnTransformers, {
+  *   specialRowProcessors: [{
+        *     condition: row => row["Type"] === "special",
+        *     finalData: row => ({
+              *       "ID": row["ID"],
+              *       "Status": "Processed"
+                  *     })
+            *   }]
+      * });
+*/
 function transformCsv(inputCsv, columnTransformers, options = {}) {
   const { isFilePath = false, specialRowProcessors = [], parseOptions = {} } = options;
 
@@ -66,7 +91,11 @@ function transformCsv(inputCsv, columnTransformers, options = {}) {
  * @param {string} inputPath - Path to the input CSV file
  * @param {string} outputPath - Path where the output CSV will be written
  * @param {Object.<string, Function|string|boolean>} columnTransformers - Object mapping new column names to transformer functions
- * @param {Object} options - Additional options for Papa Parse
+ * @param {Object} [options={}]
+ * @param {Object} [options.parseOptions={}] - Options to pass to Papa Parse
+ * @param {Object[]} [options.specialRowProcessors=[]] - Special row processors that override normal transformation
+ * @param {Function} options.specialRowProcessors.condition - Function that takes a row and returns true if this processor should be used
+ * @param {Function} options.specialRowProcessors.finalData - Function that takes a row and returns the final row data
  * @returns {void}
  */
 function transformCsvFile(
