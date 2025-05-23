@@ -7,8 +7,10 @@
  */
 const skipIfAnyEmptyProcessor = (headers) => {
     return {
-        condition: (row) => headers.some(h => !row[h] || row[h].trim() === ''),
-        finalData: () => {}
+        condition: (row) => {
+            return headers.some((h) => (row[h] === null || row[h].trim() === ''))
+        },
+        finalData: (row) => ({})
     }
 }
 
