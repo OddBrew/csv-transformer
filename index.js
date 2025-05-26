@@ -15,7 +15,7 @@ const fs = require("fs");
  * @param {Function} options.specialRowProcessors.condition - Function that takes a row and returns true if this processor should be used
  * @param {Function} options.specialRowProcessors.finalData - Function that takes a row and returns the final row data
  * @param {boolean} options.isoColumns - All columns from the base file will be integrated with their values to the output before transformers are applied
- * @param {String[]} options.removeColumns - Remove columns by names from final data
+ * @param {(String|RegExp)[]} options.removeColumns - Remove columns by names or patterns from final data
  * @returns {string} The transformed CSV as a string
  *
  * @example
@@ -97,8 +97,15 @@ function transformCsv(inputCsv, columnTransformers, options = {}) {
     return newRow;
   });
 
-  for(const column of removeColumns)
-    columnNames.delete(column)
+  for(const column of removeColumns) {
+    if(typeof column === "string")
+      columnNames.delete(column)
+    else if(column instanceof RegExp)
+      columnNames.forEach(value => {
+        if(column.test(value))
+          columnNames.delete(column)
+      })
+  }
 
   // Convert back to CSV
   return unparse(transformedData, {columns: [...columnNames]});
