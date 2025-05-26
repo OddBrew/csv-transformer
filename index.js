@@ -97,13 +97,13 @@ function transformCsv(inputCsv, columnTransformers, options = {}) {
     return newRow;
   });
 
-  for(const column of removeColumns) {
-    if(typeof column === "string")
-      columnNames.delete(column)
-    else if(column instanceof RegExp)
+  for(const pattern of removeColumns) {
+    if(typeof pattern === "string")
+      columnNames.delete(pattern)
+    else if(pattern instanceof RegExp)
       columnNames.forEach(value => {
-        if(column.test(value))
-          columnNames.delete(column)
+        if(pattern.test(value))
+          columnNames.delete(value)
       })
   }
 
