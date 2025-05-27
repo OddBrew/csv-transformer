@@ -60,6 +60,7 @@ function transformCsv(inputCsv, columnTransformers, options = {}) {
 
   const columnNames = new Set()
   // Transform the data using the provided column transformers
+  let lastRow = {};
   const transformedData = parsedData.data.map((row) => {
     const newRow = {};
 
@@ -67,8 +68,8 @@ function transformCsv(inputCsv, columnTransformers, options = {}) {
     for (const processor of specialRowProcessors) {
       let specialProcessedRow;
       if ((typeof processor.condition === "boolean" && processor.condition)
-          || (typeof processor.condition === "function" && processor.condition(row))) {
-        specialProcessedRow = processor.finalData(row);
+          || (typeof processor.condition === "function" && processor.condition(row, lastRow))) {
+        specialProcessedRow = processor.finalData(row, lastRow);
         for (const key in specialProcessedRow)
           columnNames.add(key)
         return specialProcessedRow;
@@ -87,12 +88,14 @@ function transformCsv(inputCsv, columnTransformers, options = {}) {
           else if(typeof transformerFn !== "function")
             newRow[newColumnName] = transformerFn;
           else
-            newRow[newColumnName] = transformerFn(row);
+            newRow[newColumnName] = transformerFn(row, lastRow);
         },
     );
 
     for(const key in newRow)
       columnNames.add(key)
+
+    lastRow = newRow;
 
     return newRow;
   });
