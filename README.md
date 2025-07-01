@@ -1,7 +1,8 @@
-    # CSV Transformer
+# CSV Transformer
 
 A flexible Node.js library for transforming CSV data with custom column transformations, special row processors, and advanced filtering capabilities.
-
+> [!NOTE]
+> This package was developed to be used as a local migration tool. Its resource usage is not optimized; use at your own risk on production systems.
 # Features
 
 - **Column Transformations**: Define custom transformations for columns using functions, static values, or copying existing columns
@@ -13,8 +14,11 @@ A flexible Node.js library for transforming CSV data with custom column transfor
 
 # Installation
 
+This package is not yet published on the npm registry, but you can install it this way :
+
 ```bash
-npm install csv-transformer
+npm i https://github.com/OddBrew/csv-transformer/
+
 ```
 
 # Dependencies
