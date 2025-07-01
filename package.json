@@ -1,14 +1,11 @@
 {
   "name": "csv-transformer",
   "version": "1.0.0",
-  "description": "",
+  "description": "A flexible Node.js library for transforming CSV data.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Alexandre Fayette",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "papaparse": "^5.5.2"
