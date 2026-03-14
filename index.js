@@ -111,7 +111,7 @@ function transformCsv(inputCsv, columnTransformers, options = {}) {
   }
 
   // Convert back to CSV
-  return unparse(transformedData, {columns: [...columnNames]});
+  return unparse(transformedData, {columns: [...columnNames], skipEmptyLines: true});
 }
 
 /**
